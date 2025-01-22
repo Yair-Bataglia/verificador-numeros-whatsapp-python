@@ -7,6 +7,9 @@ from cores import validador
 from utils import cache
 
 class LeftFrame(ctk.CTkFrame):
+    """
+    Clase que controlad todo el panel izquierdo de la interfaz principal.
+    """
     def __init__(self, master, rightFrame):
         super().__init__(master, width=300, fg_color="#212121")
         self.grid_propagate(False)
@@ -27,7 +30,7 @@ class LeftFrame(ctk.CTkFrame):
 
         self.title = ctk.CTkLabel(self, 
             width=100,
-            text="GGVW", 
+            text="VNW", 
             font=("Arial", 30), 
             anchor='w')
         self.title.grid(row=0, column=0, columnspan=2, pady=(30,200), padx=10)
@@ -57,24 +60,40 @@ class LeftFrame(ctk.CTkFrame):
             text="Cancelar", 
             width=70, 
             height=40, 
-            command=self.CandelarIniciarVerificacion)
+            command=self.CancelarIniciarVerificacion)
         self.cancelar_button.grid(row=3, column=0, columnspan=2,padx=0, pady=(60,0))
 
-        #FUNCIONES
+#-----------------------------------FUNCIONES---------------------------------------------
+
     def cargar_archivo(self):
+        """
+        Abre un cuadro de dialogo para indicarle al usuario que seleccione un archivo Excel (.xslx).
+        
+        La ruta de este archivo se almacena en una variable que esta dentro de GLOBALV.file_path.
+
+        Tambien guarda solamente el nombre en otra variable GLOBAL.
+
+        Para Finalizar llama a la funcion updateExcelView() de rightFrame.
+        """
+
         globalV.file_path = filedialog.askopenfilename(
             title="Selecciona un archivo Excel", filetypes=[("Archivos Excel", "*.xlsx")]
         )
         globalV.archivoName = os.path.basename(globalV.file_path)
         if globalV.file_path: 
             self.file_path_var.set(globalV.archivoName)
-            print(f"Archivo cargado: {globalV.file_path}")
 
         self.rightFrame.updateExcelView()
 
     def TriggerIniciarVerificacion(self):
+        """
+        Verifica si ya esta ejecutandose el sistemas, en caso que no lo este lo va a iniciar.
+
+        Guarda informacion global sobre el estado del proceso y crea un hilo donde se ejecuta
+        iniciarVerificacion.
+        """
+        
         if self.iniciarVerificacion_thread and self.iniciarVerificacion_thread.is_alive():
-            print("La simulación ya está en ejecución")
             return
 
         self.running = True 
@@ -83,15 +102,23 @@ class LeftFrame(ctk.CTkFrame):
         self.iniciarVerificacion_thread.daemon = True
         self.iniciarVerificacion_thread.start()
 
-    def CandelarIniciarVerificacion(self):
+    def CancelarIniciarVerificacion(self):
+        """
+        Cancela el proceso de verificacion de Numeros.
+
+        Primero verifica si esta corriendo, en caso de que el proceso se este ejecutando
+        va a matar el hilo y cambiar las variables globales.
+        """
         self.running = False  
         cache.banderinTheere = self.running
 
         if self.iniciarVerificacion_thread and self.iniciarVerificacion_thread.is_alive():
             if cache.validacionFin:
                 self.iniciarVerificacion_thread.join(0)
-        print("Simulación cancelada por el usuario")
 
     def iniciarVerificacion(self):
+        """
+        Inicia la funcion de validador que verifica los numeros.
+        """
         self.validador = validador.ValidadorNumerosWhatsApp(self.rightFrame)
         self.validador.validarNumeros()

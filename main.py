@@ -16,7 +16,6 @@ class App(ctk.CTk):
 
         self.rightFrame = RightFrame(self)
         self.rightFrame.grid(row=0, column=1, sticky="nsew" )
-        print('asdadasd')
 
         self.leftFrame = LeftFrame(self, self.rightFrame)
         self.leftFrame.grid(row=0, column=0, sticky="nsew")

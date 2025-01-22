@@ -1,0 +1,18 @@
+# Ignorar archivos de Python compilados
+__pycache__/
+Diagramas/
+Driver_Notes/
+*.pyc
+*.pyo
+*.png
+msedgedriver.exe
+# Ignorar archivos temporales generados por editores (por ejemplo, VSCode, PyCharm)
+.vscode/
+.idea/
+
+# Ignorar archivos de entorno virtual
+venv/
+.env
+
+# Ignorar archivos HTML si no son relevantes para el proyecto
+*.html
